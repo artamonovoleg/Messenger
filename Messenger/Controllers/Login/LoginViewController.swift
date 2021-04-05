@@ -43,7 +43,7 @@ class LoginViewController: UIViewController {
         let field = UITextField();
         field.autocapitalizationType = .none;
         field.autocorrectionType = .no;
-        field.returnKeyType = .continue;
+        field.returnKeyType = .done;
         field.layer.cornerRadius = 12;
         field.layer.borderWidth = 1;
         field.layer.borderColor = UIColor.lightGray.cgColor;
@@ -56,6 +56,18 @@ class LoginViewController: UIViewController {
         return field;
     }();
     
+    private let loginButton : UIButton = {
+        let button = UIButton()
+        button.setTitle("Log In", for: .normal);
+        button.backgroundColor      = .link;
+        button.setTitleColor(.white, for: .normal);
+        button.layer.cornerRadius   = 12;
+        button.layer.masksToBounds  = true;
+        button.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold);
+        
+        return button;
+    }();
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -63,14 +75,24 @@ class LoginViewController: UIViewController {
         title = "Log In";
         view.backgroundColor = .white;
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register",
-                                                            style: .done,
-                                                            target: self,
-                                                            action: #selector(DidTapRegister))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+                                                        title: "Register",
+                                                        style: .done,
+                                                        target: self,
+                                                        action: #selector(DidTapRegister))
+        
+        loginButton.addTarget(self,
+                              action: #selector(DidTapLogin),
+                              for: .touchUpInside)
+        
+        emailField.delegate = self;
+        passwordField.delegate = self;
+        
         view.addSubview(scrollView);
         scrollView.addSubview(imageView);
         scrollView.addSubview(emailField);
         scrollView.addSubview(passwordField);
+        scrollView.addSubview(loginButton);
     }
     
     override func viewDidLayoutSubviews()
@@ -94,6 +116,35 @@ class LoginViewController: UIViewController {
                                      y: emailField.bottom + 10,
                                      width: scrollView.width - 60,
                                      height: 52);
+        
+        loginButton.frame = CGRect(x: 30,
+                                   y: passwordField.bottom + 10,
+                                   width: scrollView.width - 60,
+                                   height: 52);
+    }
+    
+    @objc private func DidTapLogin()
+    {
+        guard let email = emailField.text, let password = passwordField.text,
+              !email.isEmpty, !password.isEmpty else {
+            alertUserLoginError();
+            return
+        }
+    }
+    
+    func alertUserLoginError()
+    {
+        let alert = UIAlertController(
+            title: "Ooops...",
+            message: "Please enter all",
+            preferredStyle: .alert);
+        
+        alert.addAction(UIAlertAction(
+                            title:"Dismiss",
+                            style: .cancel,
+                            handler: nil));
+        
+        present(alert, animated: true);
     }
     
     @objc private func DidTapRegister()
@@ -101,5 +152,23 @@ class LoginViewController: UIViewController {
         let vc = RegisterViewController();
         vc.title = "Create Account";
         navigationController?.pushViewController(vc, animated: true);
+    }
+}
+
+
+extension LoginViewController: UITextFieldDelegate
+{
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool
+    {
+        if textField == emailField
+        {
+            passwordField.becomeFirstResponder();
+        }
+        else
+        if textField == passwordField
+        {
+            DidTapLogin();
+        }
+        return true;
     }
 }
