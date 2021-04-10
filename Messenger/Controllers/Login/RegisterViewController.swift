@@ -15,13 +15,6 @@ class RegisterViewController: UIViewController {
         return scrollView;
     }();
     
-    private let imageView: UIImageView = {
-        let imageView = UIImageView();
-        imageView.image = UIImage(named: "logo");
-        imageView.contentMode = .scaleAspectFit;
-        return imageView;
-    }();
-    
     private let emailField: UITextField = {
         let field = UITextField();
         field.autocapitalizationType = .none;
@@ -56,9 +49,9 @@ class RegisterViewController: UIViewController {
         return field;
     }();
     
-    private let loginButton : UIButton = {
+    private let registerButton : UIButton = {
         let button = UIButton()
-        button.setTitle("Log In", for: .normal);
+        button.setTitle("Register", for: .normal);
         button.backgroundColor      = .link;
         button.setTitleColor(.white, for: .normal);
         button.layer.cornerRadius   = 12;
@@ -72,7 +65,7 @@ class RegisterViewController: UIViewController {
     {
         super.viewDidLoad()
         
-        title = "Log In";
+        title = "Register";
         view.backgroundColor = .white;
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(
@@ -81,7 +74,7 @@ class RegisterViewController: UIViewController {
                                                         target: self,
                                                         action: #selector(DidTapRegister))
         
-        loginButton.addTarget(self,
+        registerButton.addTarget(self,
                               action: #selector(DidTapLogin),
                               for: .touchUpInside)
         
@@ -89,10 +82,9 @@ class RegisterViewController: UIViewController {
         passwordField.delegate = self;
         
         view.addSubview(scrollView);
-        scrollView.addSubview(imageView);
         scrollView.addSubview(emailField);
         scrollView.addSubview(passwordField);
-        scrollView.addSubview(loginButton);
+        scrollView.addSubview(registerButton);
     }
     
     override func viewDidLayoutSubviews()
@@ -100,15 +92,8 @@ class RegisterViewController: UIViewController {
         super.viewDidLayoutSubviews();
         scrollView.frame = view.bounds;
         
-        let size = scrollView.width / 3;
-        
-        imageView.frame = CGRect(x: (scrollView.width - size) / 2,
-                                 y: 20,
-                                 width: size,
-                                 height: size);
-        
         emailField.frame = CGRect(x: 30,
-                                  y: imageView.bottom + 10,
+                                  y: 20,
                                   width: scrollView.width - 60,
                                   height: 52);
         
@@ -117,7 +102,7 @@ class RegisterViewController: UIViewController {
                                      width: scrollView.width - 60,
                                      height: 52);
         
-        loginButton.frame = CGRect(x: 30,
+        registerButton.frame = CGRect(x: 30,
                                    y: passwordField.bottom + 10,
                                    width: scrollView.width - 60,
                                    height: 52);
